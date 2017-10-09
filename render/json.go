@@ -7,7 +7,7 @@ package render
 import (
 	"bytes"
 	"net/http"
-
+	rawjson "encoding/json"
 	"github.com/gin-gonic/gin/json"
 )
 
@@ -41,12 +41,9 @@ func (r JSON) WriteContentType(w http.ResponseWriter) {
 
 func WriteJSON(w http.ResponseWriter, obj interface{}) error {
 	writeContentType(w, jsonContentType)
-	jsonBytes, err := json.Marshal(obj)
-	if err != nil {
-		return err
-	}
-	w.Write(jsonBytes)
-	return nil
+	encoder := rawjson.NewEncoder(w)
+	encoder.SetEscapeHTML(false)
+	return encoder.Encode(obj)
 }
 
 func (r IndentedJSON) Render(w http.ResponseWriter) error {
